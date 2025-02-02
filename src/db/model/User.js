@@ -14,16 +14,16 @@ const Auth = new Schema({
 });
 
 const Profile = new Schema({
-  username: { type: String, require: true, unique: true },
-  ingamename: { type: String, require: true, unique: true },
-  register: { type: Number, require: true },
+  username: { type: String, required: true, unique: true },
+  ingamename: { type: String, required: true, unique: true },
+  register_ts: { type: Number, required: true, default: Date.now() },
   avatar: { type: String, default: "" },
 });
 
 const User = new Schema({
   id: { type: String, default: v4(), unique: true },
-  email: { type: String, require: true, unique: true },
-  password: { type: String, require: true },
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
 
   auth: Auth,
   profile: Profile,
