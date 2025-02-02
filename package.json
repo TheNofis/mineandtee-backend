@@ -18,15 +18,11 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "express-validator": "^7.0.1",
-    "geolib": "^3.3.3",
     "http": "^0.0.1-security",
     "jsonwebtoken": "^9.0.1",
-    "module-alias": "^2.2.3",
     "mongoose": "^6.9.0",
     "node-fetch": "^3.3.0",
-    "redis": "^4.6.13",
-    "telegraf": "^4.16.3",
-    "xlsx-populate": "^1.21.0"
+    "redis": "^4.6.13"
   },
   "devDependencies": {
     "eslint-plugin-next": "^0.0.0"
