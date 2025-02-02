@@ -3,27 +3,26 @@ import { v4 } from "uuid";
 
 const roles = ["unverified", "user", "admin", "ban"];
 
-const Auth = new Schema({
-  emailVerified: { type: Boolean, default: false },
-  emailUrl: { type: String, default: "" },
-
-  roles: { type: String, enum: roles, default: roles[0] },
-  token: { type: String, default: "" },
-});
-
-const Profile = new Schema({
-  username: { type: String, required: true, unique: true },
-  ingamename: { type: String, required: true, unique: true },
-  register_ts: { type: Number, required: true, default: Date.now() },
-  avatar: { type: String, default: "" },
-});
+const Profile = new Schema(
+  {
+    username: { type: String, required: true, unique: true },
+    email: { type: String, required: true, unique: true },
+    ingamename: { type: String, required: true, unique: true },
+    register_ts: { type: Number, required: true, default: Date.now() },
+    avatar: { type: String, default: "" },
+  },
+  { _id: false },
+);
 
 const User = new Schema({
   id: { type: String, default: v4(), unique: true },
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
 
-  auth: Auth,
+  emailVerified: { type: Boolean, default: false },
+  emailCode: { type: String, default: "" },
+
+  password: { type: String, required: true },
+  role: { type: String, enum: roles, default: roles[0] },
+
   profile: Profile,
 });
 

@@ -6,77 +6,162 @@ import User from "../../db/model/User.js";
 
 import bcrypt from "bcrypt";
 
+const createToken = (id, role, username, emailVerified = false) => {
+  return jwt.sign(
+    { id, role, username, emailVerified },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: 60 * 60 * 24,
+    },
+  );
+};
+
 class controller {
-  async getToken(req, res) {
-    const Response = new ResponseModule();
-    try {
-      const {} = req.query;
-      Response.start();
-      return res.json(Response.success(jwt.verify(token, process.env.JWT_KEY)));
-    } catch (error) {
-      res.status(400).json(Response.error(error));
-    }
-  }
-
-  async notVerified(req, res) {
-    const Response = new ResponseModule();
-    try {
-      Response.start();
-      const users = await User.find({ "auth.verified": false });
-      return res.json(Response.success(users));
-    } catch (error) {
-      res.status(400).json(Response.error(error));
-    }
-  }
-
   async register(req, res) {
     const Response = new ResponseModule();
     try {
       Response.start();
       const { email, password, username, ingamename } = req.body;
 
-      const user = await User.findOne({ email });
-      if (user) return res.json(Response.error("User already exists"));
+      const user = await User.findOne({
+        $or: [{ "profile.username": username }, { "profile.email": email }],
+      });
+
+      if (user !== null)
+        return res.json(
+          Response.error(
+            "User already exist",
+            "Пользователь уже зарегистрирован",
+          ),
+        );
 
       const hashedPassword = await bcrypt.hash(password, 10);
-      console.log(email, username, ingamename);
 
-      await new User({
-        id: v4(),
-        email,
+      const id = v4();
+
+      new User({
+        id,
         password: hashedPassword,
         profile: {
           username,
+          email,
           ingamename,
         },
-        auth: {},
-      }).save();
-      return res.json(Response.success());
+        emailCode: v4(),
+      })
+        .save()
+        .then(() => {
+          return res.json(
+            Response.success("User registered", "Пользователь зарегистрирован"),
+          );
+        })
+        .catch((err) => {
+          return res.json(Response.error(err));
+        });
     } catch (error) {
       res.status(400).json(Response.error(error));
     }
   }
 
-  async verify(req, res) {
+  async login(req, res) {
     const Response = new ResponseModule();
     try {
-      const {} = req.body;
       Response.start();
-      return res.json(Response.success());
+      const { username, email, password } = req?.query;
+
+      const user = await User.findOne({
+        $or: [{ "profile.username": username }, { "profile.email": email }],
+      });
+      if (!user)
+        return res.json(
+          Response.error("Invalid password", "Не правильный логин или пароль"),
+        );
+
+      if (!user.emailVerified)
+        return res.json(
+          Response.error("Email not verified", "Подтвердите почту"),
+        );
+
+      const validPassword = await bcrypt.compare(password, user?.password);
+
+      if (!validPassword)
+        return res.json(
+          Response.error("Invalid password", "Не правильный логин или пароль"),
+        );
+
+      return res.json(
+        Response.success(
+          {
+            token: createToken(
+              user.id,
+              user.role,
+              user.profile.username,
+              user.emailVerified,
+            ),
+          },
+          "Успешная авторизация",
+        ),
+      );
     } catch (error) {
       res.status(400).json(Response.error(error));
     }
   }
 
-  async emailverify(req, res) {
+  async emailVerify(req, res) {
     const Response = new ResponseModule();
     try {
-      const {} = req.body;
       Response.start();
-      return res.json(Response.success());
+      const { emailCode } = req?.query;
+
+      const user = await User.findOne({ emailCode });
+      if (!user)
+        return res.json(
+          Response.error("Invalid code", "Не правильный код подтверждения"),
+        );
+
+      await User.updateOne({ id: user.id }, { emailVerified: true }).catch(
+        (err) => {
+          return res.json(Response.error(err));
+        },
+      );
+
+      return res.json(
+        Response.success(
+          {
+            token: createToken(user.id, user.role, user.profile.username, true),
+          },
+          "Успешная авторизация",
+        ),
+      );
+    } catch (error) {
+      res.status(400).json(Response.error(error));
+    }
+  }
+
+  async profile(req, res) {
+    const Response = new ResponseModule();
+    try {
+      Response.start();
+      const { id } = req?.user;
+      const user = await User.findOne(
+        { id },
+        {
+          _id: false,
+          profile: true,
+          role: true,
+        },
+      );
+
+      if (!user)
+        return res.json(
+          Response.error("User not found", "Пользователь не найден"),
+        );
+
+      return res.json(Response.success(user));
     } catch (error) {
       res.status(400).json(Response.error(error));
     }
   }
 }
+
 export default new controller();

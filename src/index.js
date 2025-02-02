@@ -16,7 +16,7 @@ const httpServer = http.createServer(app);
 
 dotenv.config();
 
-const backendPort = process.env.BACKENDPORT;
+const backendPort = process.env.BACKENDPORT || 3005;
 
 export default class Web {
   constructor({ port }) {
