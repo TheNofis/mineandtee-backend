@@ -8,6 +8,9 @@ import cors from "cors";
 import RouterUptime from "./routes/uptime/Router.Uptime.js";
 
 import RouterAuthorize from "./routes/user/Router.Authorize.js";
+import RouterUser from "./routes/user/Router.User.js";
+
+import RouterPanel from "./routes/admin/Router.Panel.js";
 
 import "./db/connect/mongodb.js";
 
@@ -33,6 +36,9 @@ export default class Web {
 
     // подключаем роутеры
     app.use("/api/user", RouterAuthorize);
+    app.use("/api/user", RouterUser);
+
+    app.use("/api/admin", RouterPanel);
 
     app.use("/api", RouterUptime);
 

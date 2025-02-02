@@ -15,7 +15,7 @@ export const AuthorizationMiddleware = (roles) => {
 
       const decodeData = jwt.verify(token, process.env.JWT_SECRET);
 
-      if (!decodeData?.emailVerify)
+      if (!decodeData?.emailVerified)
         return res
           .status(403)
           .json(Response.error("Email not verified", "Почта не подтверждена"));

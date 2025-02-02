@@ -1,5 +1,4 @@
 import { model, Schema } from "mongoose";
-import { v4 } from "uuid";
 
 const roles = ["unverified", "user", "admin", "ban"];
 
@@ -8,14 +7,14 @@ const Profile = new Schema(
     username: { type: String, required: true, unique: true },
     email: { type: String, required: true, unique: true },
     ingamename: { type: String, required: true, unique: true },
-    register_ts: { type: Number, required: true, default: Date.now() },
+    register_ts: { type: Number, required: true },
     avatar: { type: String, default: "" },
   },
   { _id: false },
 );
 
 const User = new Schema({
-  id: { type: String, default: v4(), unique: true },
+  id: { type: String, required: true, unique: true },
 
   emailVerified: { type: Boolean, default: false },
   emailCode: { type: String, default: "" },

@@ -36,28 +36,23 @@ class controller {
         );
 
       const hashedPassword = await bcrypt.hash(password, 10);
-
       const id = v4();
 
-      new User({
+      await new User({
         id,
         password: hashedPassword,
         profile: {
           username,
           email,
           ingamename,
+          register_ts: Date.now(),
         },
         emailCode: v4(),
-      })
-        .save()
-        .then(() => {
-          return res.json(
-            Response.success("User registered", "Пользователь зарегистрирован"),
-          );
-        })
-        .catch((err) => {
-          return res.json(Response.error(err));
-        });
+      }).save();
+
+      return res.json(
+        Response.success("User registered", "Пользователь зарегистрирован"),
+      );
     } catch (error) {
       res.status(400).json(Response.error(error));
     }
@@ -67,10 +62,13 @@ class controller {
     const Response = new ResponseModule();
     try {
       Response.start();
-      const { username, email, password } = req?.query;
+      const { identifier, password } = req?.query;
 
       const user = await User.findOne({
-        $or: [{ "profile.username": username }, { "profile.email": email }],
+        $or: [
+          { "profile.username": identifier },
+          { "profile.email": identifier },
+        ],
       });
       if (!user)
         return res.json(
@@ -111,7 +109,7 @@ class controller {
     const Response = new ResponseModule();
     try {
       Response.start();
-      const { emailCode } = req?.query;
+      const { emailCode } = req?.body;
 
       const user = await User.findOne({ emailCode });
       if (!user)
@@ -119,11 +117,12 @@ class controller {
           Response.error("Invalid code", "Не правильный код подтверждения"),
         );
 
-      await User.updateOne({ id: user.id }, { emailVerified: true }).catch(
-        (err) => {
-          return res.json(Response.error(err));
-        },
-      );
+      await User.updateOne(
+        { id: user.id },
+        { emailVerified: true, emailCode: "" },
+      ).catch((err) => {
+        return res.json(Response.error(err));
+      });
 
       return res.json(
         Response.success(
