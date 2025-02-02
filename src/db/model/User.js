@@ -5,7 +5,7 @@ const roles = ["unverified", "user", "admin", "ban"];
 
 const Auth = new Schema({
   emailVerified: { type: Boolean, default: false },
-  emailUrl: { type: Number, default: 0 },
+  emailUrl: { type: String, default: "" },
 
   roles: { type: String, enum: roles, default: roles[0] },
   token: { type: String, default: "" },
