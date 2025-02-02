@@ -1,11 +1,9 @@
 import { model, Schema } from "mongoose";
 import { v4 } from "uuid";
 
-const roles = ["user", "admin", "ban"];
+const roles = ["unverified", "user", "admin", "ban"];
 
 const Auth = new Schema({
-  verified: { type: Boolean, default: false },
-
   emailVerified: { type: Boolean, default: false },
   emailUrl: { type: Number, default: 0 },
 

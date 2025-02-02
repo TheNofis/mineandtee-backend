@@ -6,11 +6,16 @@ import validateonMiddleware from "../../middlewares/Middleware.Validateon.js";
 
 import { cookie } from "express-validator";
 
-router.get(
-  "/",
-  [cookie("Authorization").notEmpty().length({ min: 10 })],
-  validateonMiddleware,
-  controller.search,
-);
+//router.get(
+//  "/login",
+//  [cookie("Authorization").notEmpty().length({ min: 10 })],
+//  validateonMiddleware,
+//  controller.getToken,
+//);
+
+router.get("/notVerified", controller.notVerified);
+router.post("/register", controller.register);
+router.patch("/verify", controller.verify);
+router.patch("/emailverify", controller.emailverify);
 
 export default router;

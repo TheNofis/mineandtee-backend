@@ -7,8 +7,7 @@ import cors from "cors";
 
 import RouterUptime from "./routes/uptime/Router.Uptime.js";
 
-import RouterShopApi from "./routes/user/Router.ShopApi.js";
-import RouterSearch from "./routes/user/Router.Search.js";
+import RouterAuthorize from "./routes/user/Router.Authorize.js";
 
 import "./db/connect/mongodb.js";
 
@@ -33,8 +32,7 @@ export default class Web {
     app.use(express.urlencoded({ extended: true }));
 
     // подключаем роутеры
-    app.use("/api/user", RouterShopApi);
-    app.use("/api/user", RouterSearch);
+    app.use("/api/user", RouterAuthorize);
 
     app.use("/api", RouterUptime);
 
