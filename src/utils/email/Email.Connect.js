@@ -1,8 +1,7 @@
 import nodeMailer from "nodemailer";
 import "dotenv/config";
-dotenv.config();
 
-export const transporter = nodeMailer.createTransport({
+const transporter = nodeMailer.createTransport({
   host: process.env.EMAIL_HOST || "smtp.mail.ru",
   port: process.env.EMAIL_PORT || 465,
   secure: true,
@@ -11,3 +10,5 @@ export const transporter = nodeMailer.createTransport({
     pass: process.env.EMAIL_PASS,
   },
 });
+
+export default transporter;

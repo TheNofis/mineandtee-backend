@@ -15,7 +15,7 @@ class controller {
           profile: true,
         },
       )
-        .sort({ role: 1 })
+        .sort({ role: -1 })
         .lean();
 
       if (users.length === 0 || !users)
@@ -33,21 +33,34 @@ class controller {
     const Response = new ResponseModule();
     try {
       Response.start();
-      const { id } = req?.user;
+      const { id } = req.params;
       const { action } = req.body;
-
       const user = await User.findOne({ id });
       if (user === null)
         return res.json(
           Response.error("User not found", "Пользователь не найден"),
         );
-      if (action === "approve") user.emailVerified = true;
-      if (action === "reject") user.emailVerified = false;
+      if (action === "approve") user.role = "user";
       if (action === "ban") user.role = "ban";
 
       await user.save();
 
-      return res.json(Response.success(user, "Пользователь обновлен"));
+      return res.json(
+        Response.success(
+          await User.find(
+            { emailVerified: true },
+            {
+              _id: false,
+              id: true,
+              role: true,
+              profile: true,
+            },
+          )
+            .sort({ role: -1 })
+            .lean(),
+          "Пользователь обновлен",
+        ),
+      );
     } catch (error) {
       res.status(400).json(Response.error(error));
     }

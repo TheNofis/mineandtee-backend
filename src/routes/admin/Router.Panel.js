@@ -18,10 +18,7 @@ router.get(
 
 router.patch(
   "/user/:id",
-  [
-    header("Authorization").notEmpty(),
-    body("action").isIn(["approve", "reject", "ban"]),
-  ],
+  [header("Authorization").notEmpty(), body("action").isIn(["approve", "ban"])],
   validateonMiddleware,
   AuthorizationMiddleware(["admin"]),
   controller.actions,

@@ -6,6 +6,7 @@ import User from "../../db/model/User.js";
 
 import bcrypt from "bcrypt";
 
+import emailVerify from "../../utils/email/Email.EmailVerify.js";
 const createToken = (id, role, username, emailVerified = false) => {
   return jwt.sign(
     { id, role, username, emailVerified },
@@ -37,6 +38,7 @@ class controller {
 
       const hashedPassword = await bcrypt.hash(password, 10);
       const id = v4();
+      const emailCode = v4();
 
       await new User({
         id,
@@ -47,8 +49,16 @@ class controller {
           ingamename,
           register_ts: Date.now(),
         },
-        emailCode: v4(),
+        emailCode,
       }).save();
+
+      await emailVerify(
+        email,
+        username,
+        `${process.env.FRONTEND_URL}/emailverify?emailCode=${emailCode}`,
+      ).catch((err) => {
+        return res.json(Response.error(err));
+      });
 
       return res.json(
         Response.success("User registered", "Пользователь зарегистрирован"),
