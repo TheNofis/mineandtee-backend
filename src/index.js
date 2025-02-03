@@ -43,7 +43,7 @@ export default class Web {
     app.use("/api", RouterUptime);
 
     httpServer.listen(this.port, () => {
-      console.log("Web good connect");
+      console.log("Web connected");
     });
   }
 }

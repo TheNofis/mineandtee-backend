@@ -1,6 +1,8 @@
 import ResponseModule from "../../utils/module/Response.Module.js";
 import User from "../../db/model/User.js";
 
+import Rcon from "../../rcon/connect.js";
+
 class controller {
   async users(req, res) {
     const Response = new ResponseModule();
@@ -40,11 +42,24 @@ class controller {
         return res.json(
           Response.error("User not found", "Пользователь не найден"),
         );
-      if (action === "approve") user.role = "user";
-      if (action === "ban") user.role = "ban";
+      if (action === "approve") {
+        await Rcon.send(`whitelist add ${user?.profile?.username}`).catch(
+          (err) => {
+            console.log(err);
+          },
+        );
+        user.role = "user";
+      }
+      if (action === "ban") {
+        await Rcon.send(`whitelist remove ${user?.profile?.username}`).catch(
+          (err) => {
+            console.log(err);
+          },
+        );
+        user.role = "ban";
+      }
 
       await user.save();
-
       return res.json(
         Response.success(
           await User.find(
