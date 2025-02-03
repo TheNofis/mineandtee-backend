@@ -115,6 +115,16 @@ class controller {
     }
   }
 
+  async verify(req, res) {
+    const Response = new ResponseModule();
+    try {
+      Response.start();
+      return res.json(Response.success({ status: "verified" }));
+    } catch (error) {
+      res.status(400).json(Response.error(error));
+    }
+  }
+
   async emailVerify(req, res) {
     const Response = new ResponseModule();
     try {

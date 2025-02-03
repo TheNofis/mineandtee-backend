@@ -12,7 +12,7 @@ router.get(
   "/profile",
   [header("Authorization").notEmpty()],
   validateonMiddleware,
-  AuthorizationMiddleware(["unverified", "user", "admin"]),
+  AuthorizationMiddleware(["ban", "unverified", "user", "admin"]),
   controller.profile,
 );
 

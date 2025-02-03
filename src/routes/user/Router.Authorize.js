@@ -3,8 +3,9 @@ const router = new Router();
 
 import controller from "../../controllers/user/Controller.Authorize.js";
 
-import { body, query } from "express-validator";
+import { body, query, header } from "express-validator";
 import validateonMiddleware from "../../middlewares/Middleware.Validateon.js";
+import { AuthorizationMiddleware } from "../../middlewares/Middleware.Auth.js";
 
 import rateLimit from "express-rate-limit";
 
@@ -43,6 +44,14 @@ router.get(
   controller.login,
 );
 
+router.get(
+  "/verify",
+  [header("Authorization").notEmpty()],
+  validateonMiddleware,
+  AuthorizationMiddleware(["ban", "unverified", "user", "admin"]),
+  controller.verify,
+);
+
 router.patch(
   "/email-verify",
   requestLimiter,
@@ -50,5 +59,4 @@ router.patch(
   validateonMiddleware,
   controller.emailVerify,
 );
-
 export default router;
