@@ -10,7 +10,6 @@ export default function sendVerificationEmail(email, username, url) {
     subject: "Подтверждение почты",
     html: payload.toString("utf-8"),
   };
-  console.log(mailOptions);
 
   mailOptions.html = mailOptions.html.replace("{{username}}", username);
   mailOptions.html = mailOptions.html.replaceAll("{{url}}", url);
