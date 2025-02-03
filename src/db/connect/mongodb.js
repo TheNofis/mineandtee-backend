@@ -9,7 +9,10 @@ const mongoUrl =
 
 const mongoClient = mongoose
   .set("strictQuery", false)
-  .connect(mongoUrl)
+  .connect(mongoUrl, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.error("MongoDB not connected", err));
 
