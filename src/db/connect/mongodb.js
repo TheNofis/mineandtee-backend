@@ -4,7 +4,8 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 
 dotenv.config();
-const mongoUrl = process.env.DB || "mongodb://localhost:27017/mineandtee";
+const mongoUrl =
+  process.env.MONGODB_URL || "mongodb://localhost:27017/mineandtee";
 
 const mongoClient = mongoose
   .set("strictQuery", false)
