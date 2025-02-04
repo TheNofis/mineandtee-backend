@@ -21,9 +21,7 @@ class controller {
         .lean();
 
       if (users.length === 0 || !users)
-        return res.json(
-          Response.error("Users not found", "Пользователи не найденs"),
-        );
+        return res.json(Response.error("Users not found", 1));
 
       return res.json(Response.success(users));
     } catch (error) {
@@ -38,15 +36,10 @@ class controller {
       const { id } = req.params;
       const { action } = req.body;
       const user = await User.findOne({ id });
-      if (user === null)
-        return res.json(
-          Response.error("User not found", "Пользователь не найден"),
-        );
+      if (user === null) return res.json(Response.error("User not found", 1));
       if (action === "approve") {
         Rcon.send(`whitelist add ${user?.profile?.username}`).catch((err) => {
-          return res
-            .status(400)
-            .json(Response.error(err, "Отсутствует подключение к RCON"));
+          return res.status(400).json(Response.error(err, 9));
         }),
           (user.role = "user");
       }
@@ -73,7 +66,7 @@ class controller {
           )
             .sort({ role: -1 })
             .lean(),
-          "Пользователь обновлен",
+          8,
         ),
       );
     } catch (error) {

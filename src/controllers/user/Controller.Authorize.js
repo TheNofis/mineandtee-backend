@@ -28,14 +28,8 @@ class controller {
       const user = await User.findOne({
         $or: [{ "profile.username": username }, { "profile.email": email }],
       });
-
       if (user !== null)
-        return res.json(
-          Response.error(
-            "User already exist",
-            "Пользователь уже зарегистрирован",
-          ),
-        );
+        return res.json(Response.error("User already exist", 2));
 
       const hashedPassword = await bcrypt.hash(password, 10);
       const id = v4();
@@ -67,9 +61,7 @@ class controller {
         },
       );
 
-      return res.json(
-        Response.success("User registered", "Пользователь зарегистрирован"),
-      );
+      return res.json(Response.success("User registered", 3));
     } catch (error) {
       res.status(400).json(Response.error(error));
     }
@@ -87,22 +79,15 @@ class controller {
           { "profile.email": identifier },
         ],
       });
-      if (!user)
-        return res.json(
-          Response.error("Invalid password", "Не правильный логин или пароль"),
-        );
+      if (!user) return res.json(Response.error("Invalid password", 4));
 
       if (!user.emailVerified)
-        return res.json(
-          Response.error("Email not verified", "Подтвердите почту"),
-        );
+        return res.json(Response.error("Email not verified", 5));
 
       const validPassword = await bcrypt.compare(password, user?.password);
 
       if (!validPassword)
-        return res.json(
-          Response.error("Invalid password", "Не правильный логин или пароль"),
-        );
+        return res.json(Response.error("Invalid password", 4));
 
       return res.json(
         Response.success(
@@ -114,7 +99,7 @@ class controller {
               user.emailVerified,
             ),
           },
-          "Успешная авторизация",
+          10,
         ),
       );
     } catch (error) {
@@ -139,10 +124,7 @@ class controller {
       const { emailCode } = req?.body;
 
       const user = await User.findOne({ emailCode });
-      if (!user)
-        return res.json(
-          Response.error("Invalid code", "Не правильный код подтверждения"),
-        );
+      if (!user) return res.json(Response.error("Invalid code", 6));
 
       await User.updateOne(
         { id: user.id },
@@ -156,7 +138,7 @@ class controller {
           {
             token: createToken(user.id, user.role, user.profile.username, true),
           },
-          "Успешная авторизация",
+          10,
         ),
       );
     } catch (error) {
@@ -171,13 +153,7 @@ class controller {
       const { email } = req?.body;
 
       const user = await User.findOne({ "profile.email": email });
-      if (user === null)
-        return res.json(
-          Response.error(
-            "User not found",
-            "Пользователь с такой почтой не существует",
-          ),
-        );
+      if (user === null) return res.json(Response.error("User not found", 2));
 
       await emailVerify(
         user?.profile?.email,
@@ -187,7 +163,7 @@ class controller {
         return res.json(Response.error(err));
       });
 
-      return res.json(Response.success("Email send", "Письмо отправлено"));
+      return res.json(Response.success("Email send", 7));
     } catch (error) {
       res.status(400).json(Response.error(error));
     }
@@ -207,10 +183,7 @@ class controller {
         },
       );
 
-      if (!user)
-        return res.json(
-          Response.error("User not found", "Пользователь не найден"),
-        );
+      if (!user) return res.json(Response.error("User not found", 1));
 
       return res.json(Response.success(user));
     } catch (error) {

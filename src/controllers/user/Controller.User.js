@@ -16,10 +16,7 @@ class controller {
         },
       );
 
-      if (!user)
-        return res.json(
-          Response.error("User not found", "Пользователь не найден"),
-        );
+      if (!user) return res.json(Response.error("User not found", 1));
 
       return res.json(Response.success(user));
     } catch (error) {
