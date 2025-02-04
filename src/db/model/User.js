@@ -6,7 +6,7 @@ const Profile = new Schema(
   {
     username: { type: String, required: true, unique: true },
     email: { type: String, required: true, unique: true },
-    ingamename: { type: String, required: true, unique: true },
+    ingamename: { type: String, required: true, default: "none" },
     register_ts: { type: Number, required: true },
     avatar: { type: String, default: "" },
   },
