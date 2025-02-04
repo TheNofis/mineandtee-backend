@@ -7,8 +7,9 @@ import cors from "cors";
 
 import RouterUptime from "./routes/uptime/Router.Uptime.js";
 
+import RouterStatistics from "./routes/user/Router.Statistics.js";
 import RouterAuthorize from "./routes/user/Router.Authorize.js";
-import RouterUser from "./routes/user/Router.User.js";
+import RouterUser from "./routes/user/Router.Profile.js";
 
 import RouterPanel from "./routes/admin/Router.Panel.js";
 
@@ -35,6 +36,7 @@ export default class Web {
     app.use(express.urlencoded({ extended: true }));
 
     // подключаем роутеры
+    app.use("/api/user", RouterStatistics);
     app.use("/api/user", RouterAuthorize);
     app.use("/api/user", RouterUser);
 

@@ -1,7 +1,7 @@
 import { Router } from "express";
 const router = new Router();
 
-import controller from "../../controllers/user/Controller.User.js";
+import controller from "../../controllers/user/Controller.Profile.js";
 
 import { header } from "express-validator";
 
