@@ -43,20 +43,20 @@ class controller {
           Response.error("User not found", "Пользователь не найден"),
         );
       if (action === "approve") {
-        await Rcon.send(`whitelist add ${user?.profile?.username}`).catch(
-          (err) => {
-            console.log(err);
-          },
-        );
-        user.role = "user";
+        Rcon.send(`whitelist add ${user?.profile?.username}`).catch((err) => {
+          return res
+            .status(400)
+            .json(Response.error(err, "Отсутствует подключение к RCON"));
+        }),
+          (user.role = "user");
       }
       if (action === "ban") {
-        await Rcon.send(`whitelist remove ${user?.profile?.username}`).catch(
+        Rcon.send(`whitelist remove ${user?.profile?.username}`).catch(
           (err) => {
             console.log(err);
           },
-        );
-        user.role = "ban";
+        ),
+          (user.role = "ban");
       }
 
       await user.save();
