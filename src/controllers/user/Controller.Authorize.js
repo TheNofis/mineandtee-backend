@@ -3,10 +3,11 @@ import ResponseModule from "../../utils/module/Response.Module.js";
 import { v4 } from "uuid";
 
 import User from "../../db/model/User.js";
+import Rcon from "../../rcon/connect.js";
 
 import bcrypt from "bcrypt";
-
 import emailVerify from "../../utils/email/Email.EmailVerify.js";
+
 const createToken = (id, role, username, emailVerified = false) => {
   return jwt.sign(
     { id, role, username, emailVerified },
@@ -46,7 +47,7 @@ class controller {
         profile: {
           username,
           email,
-          ingamename,
+          ingamename: ingamename === "" ? "none" : ingamename,
           register_ts: Date.now(),
         },
         emailCode,
@@ -59,6 +60,12 @@ class controller {
       ).catch((err) => {
         return res.json(Response.error(err));
       });
+
+      await Rcon.send(`authme register ${username} ${password}`).catch(
+        (err) => {
+          console.log(err);
+        },
+      );
 
       return res.json(
         Response.success("User registered", "Пользователь зарегистрирован"),
@@ -152,6 +159,35 @@ class controller {
           "Успешная авторизация",
         ),
       );
+    } catch (error) {
+      res.status(400).json(Response.error(error));
+    }
+  }
+
+  async sendEmail(req, res) {
+    const Response = new ResponseModule();
+    try {
+      Response.start();
+      const { email } = req?.body;
+
+      const user = await User.findOne({ "profile.email": email });
+      if (user === null)
+        return res.json(
+          Response.error(
+            "User not found",
+            "Пользователь с такой почтой не существует",
+          ),
+        );
+
+      await emailVerify(
+        user?.profile?.email,
+        user?.profile?.username,
+        `${process.env.FRONTEND_URL}/emailverify?emailCode=${user?.emailCode}`,
+      ).catch((err) => {
+        return res.json(Response.error(err));
+      });
+
+      return res.json(Response.success("Email send", "Письмо отправлено"));
     } catch (error) {
       res.status(400).json(Response.error(error));
     }
