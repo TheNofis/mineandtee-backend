@@ -71,7 +71,7 @@ class controller {
     const Response = new ResponseModule();
     try {
       Response.start();
-      const { identifier, password } = req?.query;
+      const { identifier, password } = req?.body;
 
       const user = await User.findOne({
         $or: [

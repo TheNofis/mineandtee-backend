@@ -47,12 +47,12 @@ router.post(
   controller.register,
 );
 
-router.get(
+router.post(
   "/login",
   requestLimiterLogin,
   [
-    query("password").isLength({ min: 8 }),
-    query("indifier").isLength({ min: 8 }),
+    body("password").isLength({ min: 8 }),
+    body("indifier").isLength({ min: 8 }),
   ],
   controller.login,
 );
