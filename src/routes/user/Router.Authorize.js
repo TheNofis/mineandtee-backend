@@ -11,6 +11,18 @@ import rateLimit from "express-rate-limit";
 
 const requestLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 минут
+  max: 15, // Ограничение на 10 попыток
+  handler: (_, res) => {
+    res.status(429).json({
+      status: "Error",
+      error: "Too many requests, please try again later",
+      message: "Слишком много запросов, попробуйте позже",
+    });
+  },
+});
+
+const requestLimiterLogin = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 минут
   max: 10, // Ограничение на 10 попыток
   handler: (_, res) => {
     res.status(429).json({
@@ -27,8 +39,9 @@ router.post(
   [
     body("email").isEmail().normalizeEmail(),
     body("password").isLength({ min: 8 }),
-    body("username").isLength({ min: 3 }),
-    body("ingamename").isLength({ min: 3 }),
+    body("username")
+      .isLength({ min: 3 })
+      .matches(/^[a-zA-Z0-9_]*$/),
   ],
   validateonMiddleware,
   controller.register,
@@ -36,7 +49,7 @@ router.post(
 
 router.get(
   "/login",
-  requestLimiter,
+  requestLimiterLogin,
   [
     query("password").isLength({ min: 8 }),
     query("indifier").isLength({ min: 8 }),
@@ -58,5 +71,12 @@ router.patch(
   [body("emailCode").isUUID(4)],
   validateonMiddleware,
   controller.emailVerify,
+);
+
+router.post(
+  "/send-email",
+  requestLimiter,
+  [body("email").isEmail()],
+  controller.sendEmail,
 );
 export default router;
