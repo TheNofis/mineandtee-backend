@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const redisUrl = process.env.REDIS_URL || "redis://server.thenofis.ru:6379";
+const redisUrl = process.env.REDIS_URL || "redis://127.0.0.1:6379";
 const redisClient = await createClient({
   url: redisUrl,
 })
@@ -13,7 +13,7 @@ const redisClient = await createClient({
   .on("ready", () => console.log("Redis connected"))
   .connect();
 
-async function getCachedData(key, fetchFunction, ex = 60 * 60 * 24) {
+async function getCachedData(key, fetchFunction, ex = 60 * 5) {
   const cache = await redisClient.get(key);
   if (cache) return JSON.parse(cache);
 

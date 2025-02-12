@@ -36,7 +36,7 @@ export default class Web {
     app.use(express.urlencoded({ extended: true }));
 
     // подключаем роутеры
-    app.use("/api/user", RouterStatistics);
+    app.use("/api/statistics", RouterStatistics);
     app.use("/api/user", RouterAuthorize);
     app.use("/api/user", RouterUser);
 

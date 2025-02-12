@@ -1,15 +1,15 @@
 import { Rcon } from "rcon-client";
 import "dotenv/config";
 
-const connectRcon = async (delay = 5000) => {
+const connectRcon = async (host, password, port = 25575, delay = 5000) => {
   while (true) {
     try {
       const rcon = await Rcon.connect({
-        host: process.env.RCON_HOST || "play.mineandtee.fun",
-        port: process.env.RCON_PORT || 25575,
-        password: process.env.RCON_PASSWORD,
+        host,
+        port,
+        password,
       });
-      console.log("RCON connected");
+      console.log(`RCON connected to ${host}:${port}`);
       return rcon;
     } catch (err) {
       console.error(`Failed to connect to RCON: ${err.message}`);
@@ -19,6 +19,14 @@ const connectRcon = async (delay = 5000) => {
   }
 };
 
-const rcon = await connectRcon();
+const Lobby = await connectRcon(
+  process.env.RCON_HOST_LOBBY,
+  process.env.RCON_PASSWORD_LOBBY,
+);
 
-export default rcon;
+const Proxy = await connectRcon(
+  process.env.RCON_HOST_PROXY,
+  process.env.RCON_PASSWORD_PROXY,
+);
+
+export default { Lobby, Proxy };

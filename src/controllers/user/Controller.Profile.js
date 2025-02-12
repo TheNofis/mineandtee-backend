@@ -82,29 +82,21 @@ class controller {
 
     try {
       Response.start();
+
       const { id } = req?.user;
       const { skin } = req.body;
 
-      console.log(`skin set ${skin} ${req?.user?.username}`);
+      await Promise.all([
+        Rcon.Proxy.send(`skin set ${skin} ${req?.user?.username}`).catch(
+          () => {},
+        ),
+        User.findOneAndUpdate({ id }, { $set: { "profile.avatar": skin } }),
+      ]);
 
-      // Rcon.send(`skin set ${skin} ${req?.user?.username}`)
-      //   .catch((err) => {
-      //     return res.status(400).json(Response.error(err, 9));
-      //   })
-      //   .then((e) => {
-      //     console.log(e);
-      //   });
-      // await Promise.all([
-      //   User.findOneAndUpdate({ id }, { $set: { "profile.skin": skin } }).catch(
-      //     (err) => {
-      //       return res.status(400).json(Response.error(err, 0));
-      //     },
-      //   ),
-      // ]);
-
-      return res.json(Response.success());
+      return res.json(Response.success("Skin changed", 13));
     } catch (error) {
-      res.status(400).json(Response.error(error));
+      console.log(error);
+      res.status(400).json(Response.error(error, 1));
     }
   }
 }

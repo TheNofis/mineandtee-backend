@@ -42,6 +42,7 @@ class controller {
           username,
           email,
           ingamename: ingamename === "" ? "none" : ingamename,
+          avatar: username,
           register_ts: Date.now(),
         },
         emailCode,
@@ -55,7 +56,7 @@ class controller {
         return res.json(Response.error(err));
       });
 
-      await Rcon.send(`authme register ${username} ${password}`).catch(
+      await Rcon.Lobby.send(`authme register ${username} ${password}`).catch(
         (err) => {
           console.log(err);
         },

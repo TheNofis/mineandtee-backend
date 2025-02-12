@@ -38,17 +38,19 @@ class controller {
       const user = await User.findOne({ id });
       if (user === null) return res.json(Response.error("User not found", 1));
       if (action === "approve") {
-        Rcon.send(`whitelist add ${user?.profile?.username}`).catch((err) => {
-          return res.status(400).json(Response.error(err, 9));
-        }),
+        await Rcon.Lobby.send(`whitelist add ${user?.profile?.username}`).catch(
+          (err) => {
+            return res.status(400).json(Response.error(err, 9));
+          },
+        ),
           (user.role = "user");
       }
       if (action === "ban") {
-        Rcon.send(`whitelist remove ${user?.profile?.username}`).catch(
-          (err) => {
-            console.log(err);
-          },
-        ),
+        await Rcon.Lobby.send(
+          `whitelist remove ${user?.profile?.username}`,
+        ).catch((err) => {
+          console.log(err);
+        }),
           (user.role = "ban");
       }
 
