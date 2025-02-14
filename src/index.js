@@ -7,6 +7,7 @@ import cors from "cors";
 
 import RouterUptime from "./routes/uptime/Router.Uptime.js";
 
+import RouterStatisticsServer from "./routes/statistics/Router.Server.js";
 import RouterAuthorize from "./routes/user/Router.Authorize.js";
 import RouterUser from "./routes/user/Router.Profile.js";
 import RouterMaps from "./routes/user/Router.Maps.js";
@@ -35,9 +36,10 @@ export default class Web {
 
     app.use(express.urlencoded({ extended: true }));
 
-    // подключаем роутеры
-    app.use("/api/maps", RouterMaps);
+    // Подключаем роутеры
+    app.use("/api/statistics", RouterStatisticsServer);
     app.use("/api/user", RouterAuthorize);
+    app.use("/api/maps", RouterMaps);
     app.use("/api/user", RouterUser);
 
     app.use("/api/admin", RouterPanel);

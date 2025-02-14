@@ -33,7 +33,6 @@ class controller {
 
         const newData = {
           uuid: data?.info?.uuid,
-          // avatar: `https://crafatar.com/avatars/${data?.info?.uuid}`,
           online: data?.info?.online,
           player_kill: {
             total: data?.kill_data?.player_kills_total,
