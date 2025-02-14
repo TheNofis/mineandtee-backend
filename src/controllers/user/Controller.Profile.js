@@ -1,7 +1,7 @@
 import ResponseModule from "../../utils/module/Response.Module.js";
 import User from "../../db/model/User.js";
 
-import { getCachedData } from "../../db/connect/redis.js";
+import { getCachedData, redisClient } from "../../db/connect/redis.js";
 import fetch from "node-fetch";
 
 import "dotenv/config";
@@ -92,7 +92,9 @@ class controller {
         ),
         User.findOneAndUpdate({ id }, { $set: { "profile.avatar": skin } }),
       ]);
-
+      redisClient
+        .del(`maps_avatar:${req?.user?.username}`)
+        .catch(console.error);
       return res.json(Response.success("Skin changed", 13));
     } catch (error) {
       console.log(error);

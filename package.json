@@ -23,7 +23,7 @@
     "http": "^0.0.1-security",
     "jsonwebtoken": "^9.0.1",
     "mongoose": "^6.9.0",
-    "node-fetch": "^3.3.0",
+    "node-fetch": "^3.3.2",
     "nodemailer": "^6.10.0",
     "rcon-client": "^4.2.5",
     "redis": "^4.6.13"
