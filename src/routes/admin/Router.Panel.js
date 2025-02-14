@@ -3,7 +3,7 @@ const router = new Router();
 
 import controller from "../../controllers/admin/Controller.Panel.js";
 
-import { body, header } from "express-validator";
+import { header } from "express-validator";
 
 import validateonMiddleware from "../../middlewares/Middleware.Validateon.js";
 import { AuthorizationMiddleware } from "../../middlewares/Middleware.Auth.js";
@@ -17,11 +17,27 @@ router.get(
 );
 
 router.patch(
-  "/user/:id",
-  [header("Authorization").notEmpty(), body("action").isIn(["approve", "ban"])],
+  "/user/approve/:id",
+  [header("Authorization").notEmpty()],
   validateonMiddleware,
   AuthorizationMiddleware(["admin"]),
-  controller.actions,
+  controller.approve,
+);
+
+router.patch(
+  "/user/ban/:id",
+  [header("Authorization").notEmpty()],
+  validateonMiddleware,
+  AuthorizationMiddleware(["admin"]),
+  controller.ban,
+);
+
+router.delete(
+  "/user/delete/:id",
+  [header("Authorization").notEmpty()],
+  validateonMiddleware,
+  AuthorizationMiddleware(["admin"]),
+  controller.delete,
 );
 
 export default router;

@@ -8,6 +8,8 @@ import Rcon from "../../rcon/connect.js";
 import bcrypt from "bcrypt";
 import emailVerify from "../../utils/email/Email.EmailVerify.js";
 
+import STATUS from "../STATUS.js";
+
 const createToken = (id, role, username, emailVerified = false) => {
   return jwt.sign(
     { id, role, username, emailVerified },
@@ -29,7 +31,9 @@ class controller {
         $or: [{ "profile.username": username }, { "profile.email": email }],
       });
       if (user !== null)
-        return res.json(Response.error("User already exist", 2));
+        return res.json(
+          Response.error("User already exist", STATUS.USER_ALREADY_REGISTERED),
+        );
 
       const hashedPassword = await bcrypt.hash(password, 10);
       const id = v4();
@@ -62,7 +66,9 @@ class controller {
         },
       );
 
-      return res.json(Response.success("User registered", 3));
+      return res.json(
+        Response.success("User registered", STATUS.SUCCESS_REGISTER),
+      );
     } catch (error) {
       res.status(400).json(Response.error(error));
     }
@@ -80,15 +86,22 @@ class controller {
           { "profile.email": identifier },
         ],
       });
-      if (!user) return res.json(Response.error("Invalid password", 4));
+      if (!user)
+        return res.json(
+          Response.error("Invalid password", STATUS.WRONG_LOGIN_OR_PASSWORD),
+        );
 
       if (!user.emailVerified)
-        return res.json(Response.error("Email not verified", 5));
+        return res.json(
+          Response.error("Email not verified", STATUS.EMAIL_NOT_VERIFIED),
+        );
 
       const validPassword = await bcrypt.compare(password, user?.password);
 
       if (!validPassword)
-        return res.json(Response.error("Invalid password", 4));
+        return res.json(
+          Response.error("Invalid password", STATUS.WRONG_LOGIN_OR_PASSWORD),
+        );
 
       return res.json(
         Response.success(
@@ -100,7 +113,7 @@ class controller {
               user.emailVerified,
             ),
           },
-          10,
+          STATUS.SUCCESS_LOGIN,
         ),
       );
     } catch (error) {
@@ -125,7 +138,10 @@ class controller {
       const { emailCode } = req?.body;
 
       const user = await User.findOne({ emailCode });
-      if (!user) return res.json(Response.error("Invalid code", 6));
+      if (!user)
+        return res.json(
+          Response.error("Invalid code", STATUS.WRONG_CONFIRMATION_CODE),
+        );
 
       await User.updateOne(
         { id: user.id },
@@ -139,7 +155,7 @@ class controller {
           {
             token: createToken(user.id, user.role, user.profile.username, true),
           },
-          10,
+          STATUS.SUCCESS_EMAIL_VERIFY,
         ),
       );
     } catch (error) {
@@ -154,7 +170,10 @@ class controller {
       const { email } = req?.body;
 
       const user = await User.findOne({ "profile.email": email });
-      if (user === null) return res.json(Response.error("User not found", 2));
+      if (user === null)
+        return res.json(
+          Response.error("User not found", STATUS.USER_NOT_FOUND),
+        );
 
       await emailVerify(
         user?.profile?.email,
@@ -164,7 +183,9 @@ class controller {
         return res.json(Response.error(err));
       });
 
-      return res.json(Response.success("Email send", 7));
+      return res.json(
+        Response.success("Email send", STATUS.SUCCESS_EMAIL_SEND),
+      );
     } catch (error) {
       res.status(400).json(Response.error(error));
     }
@@ -184,7 +205,10 @@ class controller {
         },
       );
 
-      if (!user) return res.json(Response.error("User not found", 1));
+      if (!user)
+        return res.json(
+          Response.error("User not found", STATUS.USER_NOT_FOUND),
+        );
 
       return res.json(Response.success(user));
     } catch (error) {

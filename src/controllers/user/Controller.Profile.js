@@ -7,6 +7,7 @@ import fetch from "node-fetch";
 import "dotenv/config";
 
 import Rcon from "../../rcon/connect.js";
+import STATUS from "../STATUS.js";
 
 class controller {
   async profile(req, res) {
@@ -22,7 +23,10 @@ class controller {
           role: true,
         },
       ).lean();
-      if (!user) return res.json(Response.error("User not found", 1));
+      if (!user)
+        return res.json(
+          Response.error("User not found", STATUS.USER_NOT_FOUND),
+        );
 
       const username = req?.user?.username;
       const stats = await getCachedData(`stats:${username}`, async () => {
@@ -94,10 +98,12 @@ class controller {
       redisClient
         .del(`maps_avatar:${req?.user?.username}`)
         .catch(console.error);
-      return res.json(Response.success("Skin changed", 13));
+      return res.json(
+        Response.success("Skin changed", STATUS.SUCCESS_CHANGE_SKIN),
+      );
     } catch (error) {
       console.log(error);
-      res.status(400).json(Response.error(error, 1));
+      res.status(400).json(Response.error(error, STATUS.USER_NOT_FOUND));
     }
   }
 }

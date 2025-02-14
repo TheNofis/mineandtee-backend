@@ -8,7 +8,7 @@ export default class ResponseModule {
     return Date.now() - this.startTime;
   }
 
-  error(error = "Not error", code = 0) {
+  error(error = "Not error", code = 200) {
     console.error(error);
     return {
       status: "Error",
@@ -17,7 +17,7 @@ export default class ResponseModule {
       time: this.getTime(),
     };
   }
-  success(content = "Not content", code = 0) {
+  success(content = "Not content", code = 100) {
     return {
       status: "Success",
       content,
