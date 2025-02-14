@@ -40,4 +40,19 @@ router.delete(
   controller.delete,
 );
 
+router.post(
+  "/pool/create",
+  [
+    header("Authorization").notEmpty(),
+    body("title").isString(),
+    body("description").isString(),
+    body("answers").isArray(),
+    body("create_ts").isInt(),
+    body("close_ts").isInt(),
+  ],
+  validateonMiddleware,
+  AuthorizationMiddleware(["admin"]),
+  controller.createPool,
+);
+
 export default router;

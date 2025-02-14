@@ -21,7 +21,7 @@ class controller {
           }).lean();
 
           const response = await fetch(
-            `https://minotar.net/skin/${user?.profile?.avatar || username}.png`,
+            `https://minotar.net/avatar/${user?.profile?.avatar || username}/100.png`,
           );
           if (!response.ok) return res.status(500).json(Response.error());
 
