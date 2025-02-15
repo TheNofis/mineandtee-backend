@@ -41,18 +41,16 @@ router.delete(
 );
 
 router.post(
-  "/pool/create",
+  "/poll/create",
   [
     header("Authorization").notEmpty(),
-    body("title").isString(),
-    body("description").isString(),
+    body("info").isObject(),
     body("answers").isArray(),
-    body("create_ts").isInt(),
     body("close_ts").isInt(),
   ],
   validateonMiddleware,
   AuthorizationMiddleware(["admin"]),
-  controller.createPool,
+  controller.createPoll,
 );
 
 export default router;
