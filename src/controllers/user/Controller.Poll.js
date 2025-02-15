@@ -127,7 +127,7 @@ class controller {
           Response.error("You already voted", STATUS.USER_ALREADY_VOTED),
         );
 
-      return res.json(Response.success(poll, STATUS.SUCCESS_VOTE));
+      return res.json(Response.success(poll, STATUS.SUCCESS_UNVOTE));
     } catch (error) {
       res.status(400).json(Response.error(error));
     }
