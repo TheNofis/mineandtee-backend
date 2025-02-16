@@ -183,9 +183,7 @@ class controller {
         return res.json(Response.error(err));
       });
 
-      return res.json(
-        Response.success("Email send", STATUS.SUCCESS_EMAIL_SEND),
-      );
+      return res.json(Response.success("Email send", STATUS.SUCCESS_REGISTER));
     } catch (error) {
       res.status(400).json(Response.error(error));
     }
