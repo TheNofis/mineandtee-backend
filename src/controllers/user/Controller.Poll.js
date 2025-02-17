@@ -19,10 +19,10 @@ class controller {
         return {
           ...poll,
           is_voted: poll.answers.some((ans) =>
-            ans.users.includes(req?.user?.id),
+            ans.users.includes(req?.user?.username),
           ),
           voted_answer: poll.answers.find((ans) =>
-            ans.users.includes(req?.user?.id),
+            ans.users.includes(req?.user?.username),
           ),
         };
       });
@@ -40,6 +40,7 @@ class controller {
       const user = await User.findOne(
         { id: req?.user?.id },
         {
+          "profile.username": true,
           _id: false,
           id: true,
         },
@@ -65,8 +66,8 @@ class controller {
       if (poll?.close_ts < Date.now())
         return res.json(Response.error("Poll is closed", STATUS.POLL_CLOSED));
 
-      if (!answer.users.includes(user.id)) {
-        answer.users.push(user.id);
+      if (!answer.users.includes(user?.profile?.username)) {
+        answer.users.push(user?.profile?.username);
         answer.votes_count += 1;
         poll.votes_count += 1;
         poll.is_voted = true;
@@ -92,6 +93,7 @@ class controller {
       const user = await User.findOne(
         { id: req?.user?.id },
         {
+          "profile.username": true,
           _id: false,
           id: true,
         },
@@ -116,8 +118,10 @@ class controller {
         return res.json(
           Response.error("Answer not found", STATUS.ANSWER_NOT_FOUND),
         );
-      if (answer.users.includes(user.id)) {
-        answer.users = answer.users.filter((id) => id !== user.id);
+      if (answer.users.includes(user?.profile?.username)) {
+        answer.users = answer.users.filter(
+          (username) => username !== user?.profile?.username,
+        );
         answer.votes_count -= 1;
         poll.votes_count -= 1;
         poll.is_voted = false;
