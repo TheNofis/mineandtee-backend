@@ -1,5 +1,5 @@
 import ResponseModule from "../../utils/module/Response.Module.js";
-import User from "../../db/model/User.js";
+import User from "../../db/models/User.js";
 
 import { getCachedData, redisClient } from "../../db/connect/redis.js";
 import fetch from "node-fetch";

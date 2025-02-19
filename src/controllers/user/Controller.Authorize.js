@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import ResponseModule from "../../utils/module/Response.Module.js";
 import { v4 } from "uuid";
 
-import User from "../../db/model/User.js";
+import User from "../../db/models/User.js";
 import Rcon from "../../rcon/connect.js";
 
 import bcrypt from "bcrypt";

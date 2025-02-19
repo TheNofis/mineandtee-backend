@@ -4,7 +4,7 @@ import { getCachedData } from "../../db/connect/redis.js";
 import fetch from "node-fetch";
 
 import "dotenv/config";
-import User from "../../db/model/User.js";
+import User from "../../db/models/User.js";
 
 class controller {
   async avatar(req, res) {

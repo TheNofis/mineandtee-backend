@@ -1,6 +1,6 @@
 import ResponseModule from "../../utils/module/Response.Module.js";
-import User from "../../db/model/User.js";
-import Poll from "../../db/model/Poll.js";
+import User from "../../db/models/User.js";
+import Poll from "../../db/models/Poll.js";
 
 import Rcon from "../../rcon/connect.js";
 import STATUS from "../STATUS.js";
