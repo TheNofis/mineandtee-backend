@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import ResponseModule from "../utils/module/Response.Module.js";
-
+import User from "../db/models/User.js";
 import STATUS from "../controllers/STATUS.js";
 
 export const AuthorizationMiddleware = (roles) => {
@@ -29,7 +29,18 @@ export const AuthorizationMiddleware = (roles) => {
           .status(403)
           .json(Response.error("Not enough rights", STATUS.NOT_ENOUGH_RIGHTS));
 
-      req.user = decodeData;
+      if (decodeData.role === "unverified") {
+        User.findOne({ id: decodeData.id }, { _id: 0, role: 1 }).then(
+          (user) => {
+            decodeData.role = user.role;
+          },
+        );
+
+        req.user = decodeData;
+      } else {
+        req.user = decodeData;
+      }
+
       next();
     } catch (error) {
       return res
