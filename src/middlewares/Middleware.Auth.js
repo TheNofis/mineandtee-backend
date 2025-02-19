@@ -4,7 +4,7 @@ import User from "../db/models/User.js";
 import STATUS from "../controllers/STATUS.js";
 
 export const AuthorizationMiddleware = (roles) => {
-  return (req, res, next) => {
+  return async (req, res, next) => {
     const Response = new ResponseModule();
     try {
       const token = req.headers.authorization.split("Bearer ")[1];
@@ -16,6 +16,10 @@ export const AuthorizationMiddleware = (roles) => {
           .json(Response.error("Token not found", STATUS.TOKEN_EXPIRED));
 
       const decodeData = jwt.verify(token, process.env.JWT_SECRET);
+      if (decodeData.role === "unverified")
+        decodeData.role = (
+          await User.findOne({ id: decodeData.id }, { _id: 0, role: 1 })
+        )?.role;
 
       if (!decodeData?.emailVerified)
         return res
@@ -29,18 +33,7 @@ export const AuthorizationMiddleware = (roles) => {
           .status(403)
           .json(Response.error("Not enough rights", STATUS.NOT_ENOUGH_RIGHTS));
 
-      if (decodeData.role === "unverified") {
-        User.findOne({ id: decodeData.id }, { _id: 0, role: 1 }).then(
-          (user) => {
-            decodeData.role = user.role;
-          },
-        );
-
-        req.user = decodeData;
-      } else {
-        req.user = decodeData;
-      }
-
+      req.user = decodeData;
       next();
     } catch (error) {
       return res
