@@ -16,6 +16,14 @@ router.get(
   controller.profile,
 );
 
+router.get(
+  "/profile/:username",
+  [header("Authorization").notEmpty()],
+  validateonMiddleware,
+  AuthorizationMiddleware(["ban", "unverified", "user", "admin"]),
+  controller.getProfile,
+);
+
 router.patch(
   "/changeskin",
   [header("Authorization").notEmpty(), body("skin").matches(/^[a-zA-Z0-9_]*$/)],
